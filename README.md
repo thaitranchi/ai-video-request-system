@@ -1,5 +1,11 @@
 # AI Video Request System (Chemistry)
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Build](https://img.shields.io/github/actions/workflow/status/<your-username>/<your-repo>/ci.yml)
+![Status](https://img.shields.io/badge/status-prototype-orange)
+![Flutter](https://img.shields.io/badge/frontend-Flutter-blue)
+![FastAPI](https://img.shields.io/badge/backend-FastAPI-green)
+
 An asynchronous AI-powered system that generates short educational chemistry videos from user queries.
 
 Built with **FastAPI (backend)** and **Flutter (frontend)**, this prototype focuses on validating the **video request → processing → delivery workflow**, rather than optimizing generation fidelity.
@@ -165,3 +171,6 @@ These choices prioritize **clarity, reliability, and speed of execution**.
 
 Trần Chí Thái
 Software Engineer | AI Systems Builder
+
+## License
+This project is licensed under the MIT License.

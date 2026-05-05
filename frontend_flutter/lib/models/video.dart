@@ -1,28 +1,22 @@
-enum VideoStatus { pending, processing, completed, failed }
-
-class VideoRequest {
+class Video { // Renamed from VideoRequest
   final String id;
   final String query;
-  final VideoStatus status;
+  final String status; // Changed from enum to String
   final String? videoUrl;
 
-  VideoRequest({
+  Video({ // Renamed constructor
     required this.id,
     required this.query,
     required this.status,
     this.videoUrl,
   });
 
-  factory VideoRequest.fromJson(Map<String, dynamic> json) {
-    return VideoRequest(
-      id: json['id'],
-      query: json['query'],
-      status: VideoStatus.values.firstWhere(
-        (e) => e.toString().split('.').last == json['status'],
-        orElse: () => VideoStatus.pending,
-      ),
-      // Ensure we get the full URL if the backend sends a relative path
-      videoUrl: json['video_url'],
+  factory Video.fromJson(Map<String, dynamic> json) {
+    return Video(
+      id: json['id']?.toString() ?? "",
+      query: json['query']?.toString() ?? "",
+      status: json['status']?.toString() ?? "pending", // Default to "pending"
+      videoUrl: json['video_url']?.toString(), // Null-safe access
     );
   }
 }

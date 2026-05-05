@@ -21,9 +21,11 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
       ..initialize().then((_) {
         setState(() {});
-        _controller.play();
+        _controller.play(); // Auto-play
       }).catchError((error) {
-        setState(() => _isError = true);
+        setState(() {
+          _isError = true;
+        });
       });
   }
 

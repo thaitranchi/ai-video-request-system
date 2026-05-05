@@ -4,18 +4,18 @@ import '../core/constants.dart';
 import '../models/video.dart';
 
 class ApiService {
-  Future<List<VideoRequest>> getVideos() async {
+  Future<List<Video>> getVideos() async {
     final response = await http.get(Uri.parse('${ApiConstants.baseUrl}/videos/'));
     
     if (response.statusCode == 200) {
       List jsonResponse = json.decode(utf8.decode(response.bodyBytes));
-      return jsonResponse.map((data) => VideoRequest.fromJson(data)).toList();
+      return jsonResponse.map((data) => Video.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load videos');
     }
   }
 
-  Future<VideoRequest> createRequest(String query) async {
+  Future<Video> createRequest(String query) async {
     final response = await http.post(
       Uri.parse('${ApiConstants.baseUrl}/requests/'),
       headers: {'Content-Type': 'application/json'},
@@ -23,17 +23,17 @@ class ApiService {
     );
 
     if (response.statusCode == 202) {
-      return VideoRequest.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+      return Video.fromJson(json.decode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Failed to create request');
     }
   }
 
-  Future<VideoRequest> getVideoById(String id) async {
+  Future<Video> getVideoById(String id) async {
     final response = await http.get(Uri.parse('${ApiConstants.baseUrl}/videos/$id'));
 
     if (response.statusCode == 200) {
-      return VideoRequest.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+      return Video.fromJson(json.decode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Failed to get video details');
     }

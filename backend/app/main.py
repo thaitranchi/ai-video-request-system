@@ -17,7 +17,7 @@ app.add_middleware(
 
 # Ensure output directory exists and mount it
 os.makedirs(settings.OUTPUT_DIR, exist_ok=True)
-app.mount("/outputs", StaticFiles(directory=str(settings.OUTPUT_DIR)), name="outputs")
+app.mount("/videos", StaticFiles(directory=str(settings.OUTPUT_DIR)), name="videos")
 
 # Routers
 app.include_router(requests.router, prefix=f"{settings.API_V1_STR}/requests", tags=["requests"])

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import 'video_list_screen.dart';
+// Needed for Video model
 
 class RequestScreen extends StatefulWidget {
   const RequestScreen({super.key});
@@ -12,18 +12,20 @@ class RequestScreen extends StatefulWidget {
 class _RequestScreenState extends State<RequestScreen> {
   final _controller = TextEditingController();
   bool _isLoading = false;
+  final ApiService _apiService = ApiService(); // Instantiate ApiService
 
   Future<void> _submitRequest() async {
     if (_controller.text.trim().isEmpty) return;
 
     setState(() => _isLoading = true);
     try {
-      await apiService.createRequest(_controller.text.trim());
+      await _apiService
+          .createRequest(_controller.text.trim()); // Use instantiated service
       if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const VideoListScreen()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Video request submitted successfully!')),
       );
+      _controller.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
@@ -65,9 +67,10 @@ class _RequestScreenState extends State<RequestScreen> {
               height: 50,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _submitRequest,
-                child: _isLoading 
-                    ? const CircularProgressIndicator() 
-                    : const Text("Generate Video", style: TextStyle(fontSize: 16)),
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text("Generate Video",
+                        style: TextStyle(fontSize: 16)),
               ),
             ),
           ],
