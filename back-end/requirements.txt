@@ -1,0 +1,5 @@
+fastapi[all]
+uvicorn
+pydantic-settings
+python-multipart
+aiofiles
