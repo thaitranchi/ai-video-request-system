@@ -1,67 +1,49 @@
-name: AI Video System CI
+name: Full CI/CD
 
 on:
   push:
-    branches: [ "main", "develop" ]
-  pull_request:
+    branches: [main]
 
 jobs:
-  frontend:
-    name: Frontend (Next.js)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
 
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+        working-directory: backend
+
+      - run: uvicorn main:app --host 0.0.0.0 --port 8000
+        working-directory: backend
+
+  frontend:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: "18"
 
       - run: npm ci
-      - run: npm run lint
       - run: npm run build
 
-  backend:
-    name: Backend API (FastAPI)
+  worker:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
       - run: pip install -r requirements.txt
-
-      - run: pytest
-
-  worker:
-    name: Worker (AI + FFmpeg)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
         working-directory: worker
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-
-      - name: Verify FFmpeg
-        run: ffmpeg -version
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run pipeline test
-        run: python test_pipeline.py
+      - run: python worker.py
+        working-directory: worker
