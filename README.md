@@ -1,7 +1,7 @@
 # AI Video Request System (Chemistry)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Build](https://img.shields.io/github/actions/workflow/status/<your-username>/<your-repo>/ci.yml)
+![Build](https://img.shields.io/github/actions/workflow/status/thaitranchi/ai-video-request-system/ci.yml)
 ![Status](https://img.shields.io/badge/status-prototype-orange)
 ![Flutter](https://img.shields.io/badge/frontend-Flutter-blue)
 ![FastAPI](https://img.shields.io/badge/backend-FastAPI-green)
