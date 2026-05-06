@@ -6,7 +6,14 @@ class TTSService:
         # Initialize the OpenAI client for professional-grade TTS.
         # Uses TTS_API_KEY or falls back to OPENAI_API_KEY from config.
         api_key = settings.TTS_API_KEY or settings.OPENAI_API_KEY
-        self.client = OpenAI(api_key=api_key) if api_key else None
+        
+        if api_key and api_key.startswith("sk-or-"):
+            # OpenRouter keys are for LLMs and do not work with OpenAI's TTS endpoint.
+            print("TTS Config: OpenRouter key detected. OpenAI TTS requires a native OpenAI API key.")
+            print("Proceeding with gTTS fallback.")
+            self.client = None
+        else:
+            self.client = OpenAI(api_key=api_key) if api_key else None
 
     def synthesize(self, text: str, output_path: str):
         """
@@ -18,13 +25,13 @@ class TTSService:
         # Attempt professional API synthesis
         if self.client:
             try:
-                # 'tts-1' is optimized for speed/latency; 'alloy' is a clear academic voice
-                response = self.client.audio.speech.create(
+                # Using with_streaming_response as a context manager ensures handles are closed.
+                with self.client.audio.speech.with_streaming_response.create(
                     model="tts-1",
                     voice="alloy",
                     input=clean_text
-                )
-                response.write_to_file(str(output_path))
+                ) as response:
+                    response.write_to_file(str(output_path))
                 return
             except Exception as e:
                 print(f"AI TTS API Error: {e}. Falling back to gTTS.")
@@ -36,5 +43,6 @@ class TTSService:
             tts.save(str(output_path))
         except Exception as e:
             print(f"Critical Audio Error: Both AI and Fallback TTS failed: {e}")
+            raise RuntimeError(f"TTS Synthesis failed: {e}")
 
 tts_service = TTSService()

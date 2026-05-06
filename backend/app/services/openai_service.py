@@ -14,9 +14,19 @@ class OpenAIService:
         Generates a structured script for a chemistry video based on the query.
         """
         system_prompt = (
-            "You are a chemistry expert. Create a short educational video script. "
-            "Return the response as a JSON object with a list of 'slides'. "
-            "Each slide should have 'title', 'content', and 'narration'."
+            "You are an expert scriptwriter creating content specifically for text-to-speech voice generation. "
+            "Generate a structured video script. Return ONLY valid JSON with a 'slides' list. "
+            "Each slide must have: 'title' (max 6 words), 'content' (max 2 lines), and 'narration'.\n\n"
+            "CRITICAL Narration Rules:\n"
+            "- Must not be empty and minimum 20 characters.\n"
+            "- Use simple punctuation only (periods and commas).\n"
+            "- Avoid all symbols, emojis, abbreviations, or special characters.\n"
+            "- Write out all numbers and symbols as full words.\n"
+            "- No bullet points or newline characters.\n"
+            "- Must sound natural when spoken aloud.\n\n"
+            "General Rules:\n"
+            "- 4 to 6 slides total.\n"
+            "- Do not repeat titles in the narration."
         )
         
         response = await self.client.chat.completions.create(

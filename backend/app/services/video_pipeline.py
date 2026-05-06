@@ -3,6 +3,7 @@ import traceback
 import os
 import shutil
 import re
+import time
 from PIL import Image, ImageDraw, ImageFont
 from app.services.openai_service import openai_service
 from app.api.deps import get_db
@@ -97,9 +98,6 @@ class VideoPipeline:
             file_path = settings.VIDEO_OUTPUT_DIR / file_name
             
             await asyncio.to_thread(ffmpeg_util.concatenate_clips, clip_paths, file_path)
-
-            # Cleanup temp files
-            shutil.rmtree(temp_dir)
             
             # Atomic update to prevent race conditions in UI polling
             db[request_id].update({
@@ -110,5 +108,18 @@ class VideoPipeline:
             print(f"VIDEO_PIPELINE_ERROR for {request_id}: {str(e)}")
             traceback.print_exc()
             db[request_id]["status"] = "failed"
+        finally:
+            # Ensure cleanup happens even on failure and handle Windows file locking.
+            if 'temp_dir' in locals() and os.path.exists(temp_dir):
+                def robust_cleanup(path):
+                    for i in range(5):
+                        try:
+                            shutil.rmtree(path)
+                            return
+                        except PermissionError:
+                            time.sleep(0.5)
+                    print(f"Warning: Could not delete temp directory {path} after 5 attempts.")
+                
+                await asyncio.to_thread(robust_cleanup, temp_dir)
 
 video_pipeline = VideoPipeline()

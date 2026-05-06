@@ -10,12 +10,15 @@ class FFmpegUtil:
             settings.FFMPEG_BINARY, '-y',
             '-loop', '1', '-i', str(image_path),
             '-i', str(audio_path),
+            '-r', '25',
             '-map', '0:v:0',
             '-map', '1:a:0',
             '-c:v', 'libx264',
             '-tune', 'stillimage',
             '-c:a', 'aac',
             '-b:a', '192k',
+            '-ar', '44100',
+            '-ac', '2',
             '-pix_fmt', 'yuv420p',
             '-shortest',
             str(output_path)
@@ -30,28 +33,36 @@ class FFmpegUtil:
             raise
 
     def concatenate_clips(self, clip_paths: list, final_output_path: str):
-        """Concatenates multiple mp4 clips into one final video."""
-        list_file = final_output_path.with_suffix('.txt')
-        with open(list_file, 'w') as f:
-            for path in clip_paths:
-                # FFmpeg concat demuxer requires forward slashes or escaped backslashes on Windows
-                abs_path = os.path.abspath(path).replace('\\', '/')
-                f.write(f"file '{abs_path}'\n")
+        """Concatenate clips using filter_complex (audio-safe)."""
+        inputs = []
+        filter_parts = []
+
+        for i, path in enumerate(clip_paths):
+            inputs.extend(['-i', str(path)])
+            filter_parts.append(f"[{i}:v:0][{i}:a:0]")
+
+        filter_complex = "".join(filter_parts)
+        filter_complex += f"concat=n={len(clip_paths)}:v=1:a=1[outv][outa]"
 
         command = [
             settings.FFMPEG_BINARY, '-y',
-            '-f', 'concat', '-safe', '0',
-            '-i', str(list_file),
+            *inputs,
+            '-filter_complex', filter_complex,
+            '-map', '[outv]',
+            '-map', '[outa]',
+            '-c:v', 'libx264',
+            '-c:a', 'aac',
+            '-b:a', '192k',
+            '-ar', '44100',
+            '-ac', '2',
+            '-pix_fmt', 'yuv420p',
+            str(final_output_path)
         ]
-
-        command.extend(['-map', '0', '-c', 'copy', str(final_output_path)])
 
         try:
             subprocess.run(command, capture_output=True, check=True, shell=sys.platform == 'win32')
         except subprocess.CalledProcessError as e:
             print(f"FFmpeg Concat Error: {e.stderr.decode()}")
             raise
-        if os.path.exists(list_file):
-            os.remove(list_file)
 
 ffmpeg_util = FFmpegUtil()
