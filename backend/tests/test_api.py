@@ -20,9 +20,10 @@ def test_create_request(mocker):
         assert response.json()["status"] == "pending"
 
         # Assert that video_pipeline.process_request was called with the correct arguments
+        # Use positional arguments to match the actual call in the route handler
         mock_process_request.assert_called_once_with(
-            request_id=mocker.ANY, # request_id is generated internally, so we use mocker.ANY
-            query="What is the chemical formula for water?"
+            mocker.ANY, 
+            "What is the chemical formula for water?"
         )
 
     # The openai_service.generate_video_script mock is no longer needed here
