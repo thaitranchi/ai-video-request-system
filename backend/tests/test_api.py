@@ -15,8 +15,8 @@ def test_create_request(mocker):
             "query": "What is the chemical formula for water?",
             "language": "en"
         })
-
-        assert response.status_code == 200
+        
+        assert response.status_code == 202
         assert response.json()["status"] == "pending"
 
         # Assert that video_pipeline.process_request was called with the correct arguments
