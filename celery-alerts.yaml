@@ -1,0 +1,42 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: celery-alerts
+  labels:
+    release: prometheus
+spec:
+  groups:
+  - name: celery.rules
+    rules:
+    - alert: CeleryQueueBacklogged
+      expr: sum(celery_queue_length) > 20
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Celery queue backlogged on {{ $labels.namespace }}"
+        description: "The Celery queue depth has been above 20 for 5 minutes. Current value: {{ $value }}"
+        runbook_url: "https://wiki.yourcompany.com/playbooks/celery-backlog"
+    - alert: WorkerPodCrashing
+      expr: kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff", pod=~"video-worker.*"} == 1
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Worker pod {{ $labels.pod }} is crashing"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is in CrashLoopBackOff state. This typically indicates a recurring failure during worker startup or task execution."
+        runbook_url: "https://wiki.yourcompany.com/playbooks/worker-crash"
+    - alert: WorkerHighMemoryUsage
+      expr: |
+        (
+          sum by (pod, namespace) (container_memory_working_set_bytes{container!="", pod=~"video-worker.*"})
+          /
+          sum by (pod, namespace) (kube_pod_container_resource_limits{resource="memory", pod=~"video-worker.*"})
+        ) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High memory usage on worker pod {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using more than 80% of its memory limit. Current usage: {{ $value | humanizePercentage }}"
+        runbook_url: "https://wiki.yourcompany.com/playbooks/worker-memory"

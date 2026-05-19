@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: video-worker-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video-worker-exporter
+  template:
+    metadata:
+      labels:
+        app: video-worker-exporter
+      annotations:
+        # Tells Prometheus to automatically scrape this pod
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: exporter
+        image: ghcr.io/your-user/ai-video-request-system/backend:latest
+        # Override the default command to run our script
+        command: ["python", "-m", "app.workers.metrics_exporter"]
+        env:
+        - name: CELERY_BROKER_URL
+          value: "amqp://guest:guest@rabbitmq-service:5672//"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: video-worker-exporter-service
+  labels:
+    app: video-worker-exporter
+spec:
+  ports:
+  - name: metrics
+    port: 8001
+    targetPort: 8001
+  selector:
+    app: video-worker-exporter

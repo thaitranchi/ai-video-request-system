@@ -6,3 +6,5 @@ python-dotenv
 gTTS
 Pillow
 requests
+celery
+prometheus-client

@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: celery-slack-config
+  labels:
+    release: prometheus
+spec:
+  route:
+    receiver: 'slack-notifications'
+    groupBy: ['alertname']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 4h
+  receivers:
+  - name: 'slack-notifications'
+    slackConfigs:
+    - apiURL:
+        name: slack-api-url
+        key: url
+      channel: '#monitoring-alerts'
+      sendResolved: true
+      iconEmoji: ':warning:'
+      title: '[{{ .Status | upper }}] {{ .GroupLabels.alertname }}'
+      text: >-
+        {{ range .Alerts -}}
+        *Alert:* {{ .Annotations.summary }}
+        *Description:* {{ .Annotations.description }}
+        *Grafana Dashboard:* <https://your-grafana-instance.com/d/celery-dashboard/celery-monitoring-dashboard?orgId=1|Celery Monitoring Dashboard>
+        {{ if .Annotations.runbook_url }}*Runbook:* <{{ .Annotations.runbook_url }}|{{ .Annotations.runbook_url }}>{{ end }}
+        {{ end }}

@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: video-worker-exporter-monitor
+  labels:
+    # This label must match the serviceMonitorSelector in your Prometheus resource
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: video-worker-exporter
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s

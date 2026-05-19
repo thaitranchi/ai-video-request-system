@@ -1,0 +1,17 @@
+rules:
+  custom:
+    - seriesQuery: 'celery_queue_length{namespace!="",service!=""}'
+      resources:
+        # This maps Prometheus labels to K8s resources
+        overrides:
+          namespace: {resource: "namespace"}
+          service: {resource: "service"}
+      name:
+        matches: "^celery_queue_length"
+        as: "celery_queue_length"
+      metricsQuery: 'sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)'
+
+prometheus:
+  # Ensure this points to your actual Prometheus service
+  url: http://prometheus-server.monitoring.svc.cluster.local
+  port: 80
