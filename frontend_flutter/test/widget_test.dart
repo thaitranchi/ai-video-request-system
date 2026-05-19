@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/main.dart'; # Using relative import for robustness
+import 'package:ai_video_request_system/main.dart';
 
 void main() {
   testWidgets('App navigation smoke test', (WidgetTester tester) async {

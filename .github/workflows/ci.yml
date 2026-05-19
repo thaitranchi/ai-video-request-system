@@ -55,6 +55,8 @@ jobs:
           python -c "import app.main"
 
       - name: Run tests (if available)
+        env:
+          PYTHONPATH: .
         run: |
           if [ -d "tests" ]; then pytest; else echo "No tests found"; fi
 
