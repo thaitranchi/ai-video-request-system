@@ -36,7 +36,6 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
   List<Video> _videos = [];
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -46,7 +45,6 @@ class _MainNavigationState extends State<MainNavigation> {
 
   /// Fetches the latest video requests from the backend
   Future<void> _fetchVideos() async {
-    setState(() => _isLoading = true);
     try {
       final videos = await apiService.getVideos();
       setState(() {
@@ -59,7 +57,7 @@ class _MainNavigationState extends State<MainNavigation> {
         );
       }
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      // Finalize the request
     }
   }
 

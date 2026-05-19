@@ -4,10 +4,16 @@ import json
 
 class OpenAIService:
     def __init__(self):
-        self.client = AsyncOpenAI(
-            api_key=settings.OPENROUTER_API_KEY,
-            base_url=settings.OPENROUTER_BASE_URL
-        )
+        self._client = None
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = AsyncOpenAI(
+                api_key=settings.OPENROUTER_API_KEY,
+                base_url=settings.OPENROUTER_BASE_URL
+            )
+        return self._client
 
     async def generate_video_script(self, query: str):
         """
@@ -39,5 +45,6 @@ class OpenAIService:
         )
 
         return json.loads(response.choices[0].message.content or "{}")
+
 
 openai_service = OpenAIService()

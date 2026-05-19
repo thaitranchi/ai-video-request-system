@@ -42,6 +42,12 @@ jobs:
           flake8 . || true
 
       - name: Import test (sanity check)
+        env:
+          OPENROUTER_API_KEY: "sk-dummy-key-for-ci"
+          OPENAI_API_KEY: "sk-dummy-key-for-ci"
+          OPENROUTER_BASE_URL: "https://openrouter.ai/api/v1"
+          OPENROUTER_MODEL: "google/gemini-2.0-flash-001"
+          DATABASE_URL: "sqlite:///./test.db"
         run: |
           python -c "import app.main"
 
