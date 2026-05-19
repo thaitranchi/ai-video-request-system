@@ -5,7 +5,8 @@ class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
   final String title;
 
-  const VideoPlayerScreen({super.key, required this.videoUrl, required this.title});
+  const VideoPlayerScreen(
+      {super.key, required this.videoUrl, required this.title});
 
   @override
   State<VideoPlayerScreen> createState() => _VideoPlayerScreenState();
@@ -45,8 +46,9 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: _isError 
-            ? const Text("Error loading video", style: TextStyle(color: Colors.white))
+        child: _isError
+            ? const Text('Error loading video',
+                style: TextStyle(color: Colors.white))
             : _controller.value.isInitialized
                 ? AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,
@@ -54,7 +56,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                       alignment: Alignment.bottomCenter,
                       children: [
                         VideoPlayer(_controller),
-                        VideoProgressIndicator(_controller, allowScrubbing: true),
+                        VideoProgressIndicator(_controller,
+                            allowScrubbing: true),
                         _Controls(controller: _controller),
                       ],
                     ),
@@ -73,8 +76,10 @@ class _Controls extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       iconSize: 64,
-      icon: Icon(controller.value.isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white),
-      onPressed: () => controller.value.isPlaying ? controller.pause() : controller.play(),
+      icon: Icon(controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          color: Colors.white),
+      onPressed: () =>
+          controller.value.isPlaying ? controller.pause() : controller.play(),
     );
   }
 }

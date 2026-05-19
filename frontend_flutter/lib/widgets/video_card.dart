@@ -59,7 +59,7 @@ class VideoCard extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: onWatch,
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text("Watch"),
+                    label: const Text('Watch'),
                   ),
               ],
             ),

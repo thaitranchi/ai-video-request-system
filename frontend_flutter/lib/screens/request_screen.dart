@@ -38,7 +38,7 @@ class _RequestScreenState extends State<RequestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("AI Chemistry Video Generator")),
+      appBar: AppBar(title: const Text('AI Chemistry Video Generator')),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -47,7 +47,7 @@ class _RequestScreenState extends State<RequestScreen> {
             const Icon(Icons.science, size: 80, color: Colors.blue),
             const SizedBox(height: 24),
             const Text(
-              "What chemistry concept do you want to learn?",
+              'What chemistry concept do you want to learn?',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
@@ -56,8 +56,8 @@ class _RequestScreenState extends State<RequestScreen> {
               controller: _controller,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: "e.g. How does the pH scale work?",
-                hintText: "Enter query...",
+                labelText: 'e.g. How does the pH scale work?',
+                hintText: 'Enter query...',
               ),
               maxLines: 2,
             ),
@@ -69,7 +69,7 @@ class _RequestScreenState extends State<RequestScreen> {
                 onPressed: _isLoading ? null : _submitRequest,
                 child: _isLoading
                     ? const CircularProgressIndicator()
-                    : const Text("Generate Video",
+                    : const Text('Generate Video',
                         style: TextStyle(fontSize: 16)),
               ),
             ),
