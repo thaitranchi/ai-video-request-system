@@ -2,7 +2,6 @@ import asyncio
 import traceback
 import os
 import shutil
-import re
 import time
 from PIL import Image, ImageDraw, ImageFont
 from app.services.openai_service import openai_service

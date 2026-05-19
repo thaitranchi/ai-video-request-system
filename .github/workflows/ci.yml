@@ -43,7 +43,7 @@ jobs:
 
       - name: Import test (sanity check)
         run: |
-          python -c "import main"
+          python -c "import app.main"
 
       - name: Run tests (if available)
         run: |
