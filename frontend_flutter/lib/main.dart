@@ -57,7 +57,8 @@ class _MainNavigationState extends State<MainNavigation> {
         );
       }
     } finally {
-      // Finalize the request
+      // If you decide to add a loading indicator here later,
+      // you can re-introduce the isLoading state.
     }
   }
 
